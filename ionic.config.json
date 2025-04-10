@@ -1,0 +1,7 @@
+{
+  "name": "splitCheck",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
