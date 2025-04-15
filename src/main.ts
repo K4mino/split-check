@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router';
 
 import { IonicVue } from '@ionic/vue';
-
+import { initUser } from './supabase'
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
 
@@ -34,6 +34,7 @@ import '@ionic/vue/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.css';
 
+initUser().then(() => {
 const app = createApp(App)
   .use(IonicVue)
   .use(router);
@@ -41,3 +42,4 @@ const app = createApp(App)
 router.isReady().then(() => {
   app.mount('#app');
 });
+})
