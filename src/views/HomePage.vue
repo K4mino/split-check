@@ -23,7 +23,7 @@
 
       <div id="container">
         <GroupCard to="/groups" :icon="peopleOutline" title="My groups" subTitle="Manage your expense groups" />
-        <GroupCard :icon="receiptOutline" title="Recent Expenses" subTitle="View and manage expenses" />
+        <GroupCard to="/expenses" :icon="receiptOutline" title="Recent Expenses" subTitle="View and manage expenses" />
         <GroupCard :icon="timeOutline" title="History" subTitle="View past transactions" />
         <GroupCard :icon="shareSocialOutline" title="Export & Share" subTitle="Share expense reports" />
       </div>

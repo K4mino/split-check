@@ -7,6 +7,7 @@ import GroupsPage from '../views/Groups.vue'
 import GroupPage from '../views/Group.vue'
 import CreateGroupPage from '../views/CreateGroup.vue'
 import ExpensePage from '../views/Expense.vue'
+import ExpensesPage from '../views/Expenses.vue'
 import { supabase } from '@/supabase';
 
 const routes: Array<RouteRecordRaw> = [
@@ -47,6 +48,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/create-group',
     name: 'CreateGroup',
     component: CreateGroupPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/expenses',
+    name: 'Expenses',
+    component: ExpensesPage,
     meta: { requiresAuth: true }
   },
   {
