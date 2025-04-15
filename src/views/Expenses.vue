@@ -18,9 +18,24 @@ import {
 import { chevronBackOutline, filterOutline, addCircleOutline, receiptOutline,cashOutline } from 'ionicons/icons'
 import { supabase } from '@/supabase';
 
+interface CompletedExpense {
+  id: string
+  title: string
+  amount: number
+  created_at: string
+  paidBy: {
+    id: string
+    name: string
+  }
+  group: {
+    id: string
+    name: string
+  }
+}
+
 const router = useRouter()
 const user = ref()
-const expenses = ref([])
+const expenses = ref<CompletedExpense[] | null>(null)
 
 onMounted(async () => {
     try {
