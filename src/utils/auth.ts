@@ -17,7 +17,7 @@ export const signInWithGoogle = async () => {
         const isNative = Capacitor.isNativePlatform();
         const redirectUrl = isNative 
           ? import.meta.env.VITE_SUPABASE_OAUTH_CALLBACK_URL as string
-          : window.location.origin;
+          : `${window.location.origin}/login`;
 
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',

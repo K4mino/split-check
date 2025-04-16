@@ -83,7 +83,6 @@ onMounted(async () => {
         <IonContent class="ion-padding">
             <div class="header-info">
                 <h2>Recent Expenses</h2>
-                <p class="subtitle">View all expenses across groups</p>
                 <div class="action-buttons">
                     <IonButton fill="outline" size="small">
                         <IonIcon :icon="filterOutline" />

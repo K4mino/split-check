@@ -14,7 +14,7 @@
                     <h2 class="text-xl font-bold">{{ group?.name }}</h2>
                     <p class="text-gray-500">{{ groupMembers?.length }} members</p>
                 </div>
-                <IonButton color="dark" size="small" @click="router.push(`/add-expense?group=${group?.id}`)">
+                <IonButton color="dark" size="small" @click="router.push(`/addexpenses?group=${group?.id}`)">
                     <IonIcon :icon="addCircleOutline" slot="start" />
                     Add Expense
                 </IonButton>

@@ -19,12 +19,12 @@
                     <ion-input v-model="amount" fill="outline" placeholder="0.00"></ion-input>
 
                     <ion-label>Groups</ion-label>
-                    <ion-select placeholder="Select group" v-model="selectedGroupId">
+                    <ion-select placeholder="Select group" v-model="selectedGroupId"  fill="outline">
                         <ion-select-option v-for="group in groups" :value="group.id">{{ group.name }}</ion-select-option>
                     </ion-select>
 
                     <ion-label>Paid by</ion-label>
-                    <ion-select placeholder="Select who paid" v-model="paidBy">
+                    <ion-select placeholder="Select who paid" v-model="paidBy" fill="outline">
                         <ion-select-option v-for="member in selectedGroupMembers" :value="member.id">{{ member.name }}</ion-select-option>
                     </ion-select>
 
@@ -91,7 +91,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import {
     IonToolbar,
     IonContent,
@@ -125,6 +125,7 @@ const paidBy = ref()
 const groups = ref()
 
 const router = useRouter()
+const route = useRoute()
 
 onMounted(async () => {
     try {
@@ -136,23 +137,22 @@ onMounted(async () => {
 
         groups.value = fetchedGroups
 
-        console.log(groups.value)
+        if(route.query.group){
+            selectedGroupId.value = route.query.group
+        }
+
     } catch (error) {
         console.log(error)
     }
 })
 
 watch( () => selectedGroupId.value, async (newSelectedGroup) => {
-    console.log('newgroup ' , newSelectedGroup)
-
     const {data: fetchedGroupMembers, error: fetchingGroupMembersError} = await supabase
         .from('group_members')
         .select('*')
         .eq('group_id', newSelectedGroup)
 
     selectedGroupMembers.value = fetchedGroupMembers
-
-    console.log('newMembers',selectedGroupMembers.value)
 })
 
 const createExpense = async () => {
