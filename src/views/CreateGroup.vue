@@ -77,8 +77,6 @@ const createGroup = async () => {
     return
   }
 
-  console.log('Group created:', data)
-
   await supabase.from('group_members').insert(
     members.value.map((member) => ({
       group_id: data.id,

@@ -19,13 +19,14 @@
                     <ion-input v-model="amount" fill="outline" placeholder="0.00"></ion-input>
 
                     <ion-label>Groups</ion-label>
-                    <ion-select placeholder="Select group" v-model="selectedGroupId"  fill="outline">
+                    <ion-select placeholder="Select group" v-model="selectedGroupId" fill="outline">
                         <ion-select-option v-for="group in groups" :value="group.id">{{ group.name }}</ion-select-option>
                     </ion-select>
 
                     <ion-label>Paid by</ion-label>
                     <ion-select placeholder="Select who paid" v-model="paidBy" fill="outline">
-                        <ion-select-option v-for="member in selectedGroupMembers" :value="member.id">{{ member.name }}</ion-select-option>
+                        <ion-select-option v-for="member in selectedGroupMembers" :value="member.id">{{ member.name
+                        }}</ion-select-option>
                     </ion-select>
 
                     <div>
@@ -40,22 +41,26 @@
                             </ion-segment-button>
                         </ion-segment>
 
-                        <div v-if="splitType === 'equal'" >
-                            <p class="text-sm text-muted">The expense will be split equally among all members.</p>
+                        <div v-if="splitType === 'equal'">
+                            <p>The expense will be split equally among all members.</p>
                         </div>
 
                         <div v-else>
-                            <ion-row v-for="member in selectedGroupMembers" :key="member.id"
-                                class="ion-justify-content-start ion-align-items-center">
-                                <ion-col size="4">
-                                    <span>{{ member.name }}</span>
-                                </ion-col>
-                                <ion-col size="8">
-                                    <ion-input v-model="member.amount" fill="outline" placeholder="0.00" type="number" inputmode="decimal" class="text-end">
-                                        <template #prefix>$</template>
-                                    </ion-input>
-                                </ion-col>
-                            </ion-row>
+                            <div v-if="selectedGroupMembers?.length">
+                                <ion-row v-for="member in selectedGroupMembers" :key="member.id"
+                                    class="ion-justify-content-start ion-align-items-center">
+                                    <ion-col size="4">
+                                        <span>{{ member.name }}</span>
+                                    </ion-col>
+                                    <ion-col size="8">
+                                        <ion-input v-model="member.amount" fill="outline" placeholder="0.00" type="number"
+                                            inputmode="decimal" class="text-end">
+                                            <template #prefix>$</template>
+                                        </ion-input>
+                                    </ion-col>
+                                </ion-row>
+                            </div>
+                            <p v-else>You need to select group</p>
                         </div>
                     </div>
 
@@ -137,7 +142,7 @@ onMounted(async () => {
 
         groups.value = fetchedGroups
 
-        if(route.query.group){
+        if (route.query.group) {
             selectedGroupId.value = route.query.group
         }
 
@@ -146,8 +151,8 @@ onMounted(async () => {
     }
 })
 
-watch( () => selectedGroupId.value, async (newSelectedGroup) => {
-    const {data: fetchedGroupMembers, error: fetchingGroupMembersError} = await supabase
+watch(() => selectedGroupId.value, async (newSelectedGroup) => {
+    const { data: fetchedGroupMembers, error: fetchingGroupMembersError } = await supabase
         .from('group_members')
         .select('*')
         .eq('group_id', newSelectedGroup)
@@ -169,18 +174,18 @@ const createExpense = async () => {
         })
         .select()
         .single()
-       
-    for(const member of selectedGroupMembers.value){
+
+    for (const member of selectedGroupMembers.value) {
         let splitAmount = member.amount
 
-        if(splitType.value === 'equal'){    
-            splitAmount = newExpense.amount/selectedGroupMembers.value.length
+        if (splitType.value === 'equal') {
+            splitAmount = newExpense.amount / selectedGroupMembers.value.length
         }
 
         await supabase.from('expense_splits').insert({
-            expense_id:newExpense.id,
-            member_id:member.id,
-            amount:splitAmount
+            expense_id: newExpense.id,
+            member_id: member.id,
+            amount: splitAmount
         })
     }
 

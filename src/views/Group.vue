@@ -20,68 +20,80 @@
                 </IonButton>
             </div>
 
-            <!-- <IonSegment v-model="selectedTab">
+            <IonSegment color="dark" v-model="selectedTab">
                 <IonSegmentButton value="balances">
                     <IonLabel>Balances</IonLabel>
                 </IonSegmentButton>
                 <IonSegmentButton value="expenses">
                     <IonLabel>Expenses</IonLabel>
                 </IonSegmentButton>
-            </IonSegment> -->
+            </IonSegment>
 
-            <div>
-                <!-- <IonCard>
+            <div v-if="selectedTab === 'balances'">
+                <IonCard class="ion-card">
                     <IonCardContent>
-                        <h3 class="font-medium mb-3">Summary</h3>
-                        <div class="space-y-3">
-                            <div v-for="member in group.members" :key="member.id" class="flex justify-between items-center">
-                                <div class="flex items-center gap-2">
-                                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-xs">
-                                        {{ member.name.charAt(0) }}
-                                    </div>
-                                    <span>{{ member.name }}</span>
-                                </div>
-                                <span :class="{
-                                    'bg-green-100 text-green-800 px-2 py-1 rounded': member.balance > 0,
-                                    'bg-red-100 text-red-800 px-2 py-1 rounded': member.balance < 0,
-                                    'bg-gray-200 text-gray-600 px-2 py-1 rounded': member.balance === 0,
-                                }">
-                                    {{ member.balance > 0 ? `gets $${member.balance.toFixed(2)}` : member.balance < 0 ?
-                                        `owes $${Math.abs(member.balance).toFixed(2)}` : 'settled up' }} </span>
-                            </div>
+                        <h3>Summary</h3>
+                        <div>
+                            <IonRow class="ion-justify-content-between" v-for="member in groupMembers" :key="member.id">
+                                <IonCol size="4">
+                                    <IonRow class="ion-justify-content-start ion-align-items-center">
+                                        <IonCol>
+                                            <IonAvatar class="avatar-circle">
+                                                <IonLabel> {{ member.name.charAt(0) }}</IonLabel>
+                                            </IonAvatar>
+                                        </IonCol>
+                                        <IonCol>
+                                            <span>{{ member.name }}</span>
+                                        </IonCol>
+                                    </IonRow>
+                                </IonCol>
+                                <IonCol size="4">
+                                    <IonBadge :color="balances[member.id] > 0
+                                        ? 'dark'
+                                        : balances[member.id] < 0
+                                            ? 'light'
+                                            : 'medium'" class="ion-text-wrap">
+                                        {{
+                                            balances[member.id] > 0
+                                            ? `gets $${balances[member.id].toFixed(2)}`
+                                            : balances[member.id] < 0 ? `owes $${Math.abs(balances[member.id]).toFixed(2)}`
+                                                : 'settled up' }} </IonBadge>
+                                </IonCol>
+                            </IonRow>
                         </div>
                     </IonCardContent>
                 </IonCard>
 
-                <IonCard>
+                <IonCard class="ion-card">
                     <IonCardContent>
-                        <h3 class="font-medium mb-3">Settle Up</h3>
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between" v-for="(debtor, index) in group.members.slice(1)"
-                                :key="debtor.id">
-                                <div class="flex items-center gap-2">
-                                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-xs">
+                        <h3 class="settle-title">Settle Up</h3>
+
+                        <div class="settle-list">
+                            <div class="settle-row" v-for="(debtor, index) in groupMembers?.slice(1)" :key="debtor.id">
+                                <div class="member-side">
+                                    <div class="avatar-circle">
                                         {{ debtor.name.charAt(0) }}
                                     </div>
                                     <span>{{ debtor.name }}</span>
                                 </div>
+
                                 <IonIcon :icon="arrowForwardOutline" />
-                                <div class="flex items-center gap-2">
+
+                                <div class="member-side">
                                     <span>You</span>
-                                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-xs">
-                                        Y
-                                    </div>
+                                    <div class="avatar-circle">Y</div>
                                 </div>
-                                <IonButton size="small" fill="outline">
-                                    ${{ Math.abs(debtor.balance).toFixed(2) }}
+
+                                <IonButton size="small" fill="outline" color="dark">
+                                    ${{ Math.abs(balances[debtor.id]) }}
                                 </IonButton>
                             </div>
                         </div>
                     </IonCardContent>
-                </IonCard> -->
+                </IonCard>
             </div>
 
-            <div>
+            <div v-else>
                 <IonCard class="ion-card " v-for="expense in expenses" :key="expense.id"
                     @click="router.push(`/expenses/${expense.id}`)">
                     <IonCardContent>
@@ -112,7 +124,7 @@
                     </IonButton>
                 </IonCol>
                 <IonCol>
-                    <IonButton color="dark"  @click="deleteGroup">
+                    <IonButton color="dark" @click="deleteGroup">
                         Delete Group
                     </IonButton>
                 </IonCol>
@@ -141,7 +153,9 @@ import {
     IonIcon,
     IonRow,
     IonCol,
-    IonText
+    IonText,
+    IonAvatar,
+    IonBadge
 } from '@ionic/vue'
 import { arrowForwardOutline, chevronBackOutline, addCircleOutline } from 'ionicons/icons'
 import { supabase } from '@/supabase';
@@ -155,20 +169,21 @@ const group = ref<Group | null>(null)
 const expenses = ref<Expense[] | null>([])
 const user = ref()
 const groupMembers = ref<GroupMember[] | null>([])
+const balances: Record<string, number> = {}
 
 const getMember = (id: string) => {
     return groupMembers.value?.find((member: GroupMember) => member.id === id)
 }
 
-const deleteGroup = async() => {
+const deleteGroup = async () => {
     try {
-        const {data,error} = await supabase
-        .from('groups')
-        .delete()
-        .eq('id',group.value?.id)
+        const { data, error } = await supabase
+            .from('groups')
+            .delete()
+            .eq('id', group.value?.id)
 
-        router.push('/groups') 
-        if(error) throw new Error(error.message)
+        router.push('/groups')
+        if (error) throw new Error(error.message)
     } catch (error) {
         console.log(error)
     }
@@ -190,7 +205,19 @@ onMounted(async () => {
 
         const { data: fetchedExpenses } = await supabase
             .from('expenses')
-            .select('*')
+            .select(`
+                id,
+                amount,
+                paid_by,
+                created_at,
+                group_id,
+                title,
+                split_type,
+                expense_splits (
+                    member_id,
+                    amount
+                )
+            `)
             .eq('group_id', fetchedGroup.id)
 
         if (fetchedExpenses) {
@@ -204,6 +231,17 @@ onMounted(async () => {
 
         groupMembers.value = fetchedGroupMembers
 
+        groupMembers.value.forEach((m) => {
+            balances[m.id] = 0
+        })
+
+        expenses.value.forEach((expense) => {
+            balances[expense.paid_by] += expense.amount
+
+            expense.expense_splits?.forEach((split) => {
+                balances[split.member_id] -= split.amount
+            })
+        })
         if (error) throw new Error(error.message)
     } catch (error) {
         console.log(error)
@@ -221,5 +259,30 @@ const selectedTab = ref('balances')
 .expense-title {
     font-size: 18px;
     font-weight: 600;
+}
+
+.settle-title {
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.settle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.settle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.member-side {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 </style>

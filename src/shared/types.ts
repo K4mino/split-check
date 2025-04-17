@@ -19,6 +19,15 @@ export type Expense = {
     split_type: string
     group_id: string
     receipt?:string
+    expense_splits?:ExpenseSplit[]
+}
+
+export type ExpenseSplit = {
+    id:string
+    created_at: string
+    expense_id:string
+    member_id:string
+    amount:number
 }
 
 export type GroupMember = {

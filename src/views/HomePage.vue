@@ -15,13 +15,11 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-      </ion-header>
 
+<!--       <h2>Split expenses with friends easily</h2> -->
       <div id="container">
+
+
         <GroupCard to="/groups" :icon="peopleOutline" title="My groups" subTitle="Manage your expense groups" />
         <GroupCard to="/expenses" :icon="receiptOutline" title="Recent Expenses" subTitle="View and manage expenses" />
         <GroupCard :icon="timeOutline" title="History" subTitle="View past transactions" />

@@ -36,8 +36,7 @@
                                 <IonAvatar class="avatar-small">
                                     <IonLabel class="avatar-text">Y</IonLabel>
                                 </IonAvatar>
-                                <p class="payer-name">{{ expense?.paid_by == user?.id ? 'You' :
-                                    getMember(expense!!.paid_by)?.name }}</p>
+                                <p class="payer-name">{{ expense?.paid_by == user?.id ? 'You' : getMember(expense.paid_by).name }}</p>
                             </div>
                         </div>
                     </div>

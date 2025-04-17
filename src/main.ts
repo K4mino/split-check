@@ -34,6 +34,8 @@ import '@ionic/vue/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.css';
 
+import './assets/main.css';
+
 initUser().then(() => {
 const app = createApp(App)
   .use(IonicVue)

@@ -114,17 +114,17 @@ onMounted(async () => {
                     <IonCardHeader>
                         <IonRow class="ion-justify-content-between">
                             <IonCardTitle>{{ group.name }}</IonCardTitle>
-                            <IonBadge color="medium">{{ group.pendingAmount }}</IonBadge>
+                            <IonBadge color="dark">{{ group.pendingAmount }}</IonBadge>
                         </IonRow>
                     </IonCardHeader>
                     <IonCardContent>
                         <ion-row class="ion-justify-content-start">
                             <IonAvatar v-for="(member, i) in group.members.slice(0, 3)" :key="i"
-                                style="width: 32px; height: 32px; border: 2px solid var(--ion-color-light); background: var(--ion-color-step-150); display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                                class="avatar-circle">
                                 <IonLabel>{{ member.charAt(0) }}</IonLabel>
                             </IonAvatar>
                             <IonAvatar v-if="group.members.length > 3"
-                                style="width: 32px; height: 32px; border: 2px solid var(--ion-color-light); background: var(--ion-color-step-150); display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                                class="avatar-circle">
                                 <IonLabel>+{{ group.members.length - 3 }}</IonLabel>
                             </IonAvatar>
                         </ion-row>
@@ -139,12 +139,11 @@ onMounted(async () => {
                 </IonCard>
             </div>
 
-           <!--  <div v-if="groups.length === 0" style="text-align: center; padding: 2rem">
-                <ion-text color="medium">
-                    <p>You don't have any groups yet</p>
+            <div v-if="groups.length === 0" style="text-align: center; padding: 2rem">
+                <ion-text>
+                    <h3>You don't have any groups yet</h3>
                 </ion-text>
-                <IonButton @click="router.push('/create-group')">Create Your First Group</IonButton>
-            </div> -->
+            </div> 
         </IonContent>
     </IonPage>
 </template>
