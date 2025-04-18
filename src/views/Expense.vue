@@ -33,7 +33,7 @@
                         <div>
                             <p class="label-muted">Paid by</p>
                             <div class="payer-info">
-                                <IonAvatar class="avatar-small">
+                                <IonAvatar class="avatar-circle">
                                     <IonLabel class="avatar-text">Y</IonLabel>
                                 </IonAvatar>
                                 <p class="payer-name">{{ expense?.paid_by == user?.id ? 'You' : getMember(expense.paid_by).name }}</p>
@@ -45,13 +45,12 @@
 
                     <div class="split-info">
                         <p class="split-heading">Split Details ({{ expense?.split_type }})</p>
-                        <p class="label-muted-small">How much each person pays</p>
                     </div>
 
                     <div class="member-list">
                         <div v-for="member in expense?.expense_splits" :key="member.id" class="member-item">
                             <div class="member-info">
-                                <IonAvatar class="avatar-medium">
+                                <IonAvatar class="avatar-circle">
                                     <IonLabel class="avatar-text">{{ member.group_members.name.charAt(0) }}</IonLabel>
                                 </IonAvatar>
                                 <span>{{ member.group_members.name }}</span>
@@ -79,8 +78,8 @@
             </IonCard>
 
             <div class="action-buttons">
-                <IonButton fill="outline">Delete</IonButton>
-                <IonButton>Mark as Settled</IonButton>
+                <IonButton color="dark" fill="outline" @click="deleteExpense">Delete</IonButton>
+                <IonButton color="dark">Mark as Settled</IonButton>
             </div>
         </IonContent>
     </ion-page>
@@ -130,6 +129,7 @@ onMounted(async () => {
                     id,
                     title,
                     amount,
+                    created_at,
                     paid_by,
                     split_type,
                     expense_splits (
@@ -154,7 +154,24 @@ onMounted(async () => {
 })
 
 const getMember = (id: string) => {
-    return expense.value?.expense_splits.find((member) => member.member_id === id)
+   const member = expense.value?.expense_splits.find((member) => member.member_id === id)
+
+   return member.group_members
+}
+
+const deleteExpense = async() => {
+    try {
+        const {data, error} = await supabase
+            .from('expenses')
+            .delete()
+            .eq('id',expense.value.id)
+
+        router.go(-1)
+
+        if(error) throw new Error(error.message)
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 </script>
@@ -214,17 +231,6 @@ const getMember = (id: string) => {
     gap: 8px;
 }
 
-.avatar-small {
-    width: 24px;
-    height: 24px;
-}
-
-.avatar-medium {
-    width: 32px;
-    height: 32px;
-
-}
-
 .avatar-text {
     font-size: 12px;
 }
@@ -266,7 +272,8 @@ const getMember = (id: string) => {
 }
 
 .member-amount {
-    font-weight: 500;
+    font-weight: 600;
+    color: var(--ion-color-dark);
 }
 
 .receipt-header {

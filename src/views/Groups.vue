@@ -26,6 +26,7 @@ import {
 import { addCircleOutline, chevronForwardOutline } from 'ionicons/icons'
 import { supabase } from '../supabase'
 import type { Group } from '@/shared/types'
+import { formatDate } from '@/utils/date'
 
 const router = useRouter()
 
@@ -71,7 +72,7 @@ onMounted(async () => {
                     members: groupMembers?.map((m) => m.name) || [],
                     recentExpense: latestExpense?.title || '—',
                     date: latestExpense?.created_at
-                        ? new Date(latestExpense.created_at).toLocaleDateString()
+                        ? formatDate(latestExpense?.created_at)
                         : '',
                     pendingAmount,
                 })
@@ -139,7 +140,7 @@ onMounted(async () => {
                 </IonCard>
             </div>
 
-            <div v-if="groups.length === 0" style="text-align: center; padding: 2rem">
+            <div v-if="groups?.length === 0 && !isLoading" style="text-align: center; padding: 2rem">
                 <ion-text>
                     <h3>You don't have any groups yet</h3>
                 </ion-text>

@@ -51,7 +51,7 @@
                                     <IonBadge :color="balances[member.id] > 0
                                         ? 'dark'
                                         : balances[member.id] < 0
-                                            ? 'light'
+                                            ? 'medium'
                                             : 'medium'" class="ion-text-wrap">
                                         {{
                                             balances[member.id] > 0

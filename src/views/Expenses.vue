@@ -115,7 +115,7 @@ onMounted(async () => {
                         <div class="expense-paid">
                             <span>Paid by:</span>
                             <div class="paid-info">
-                                <IonAvatar class="paid-avatar">
+                                <IonAvatar class="avatar-circle">
                                     <IonLabel class="avatar-initial">{{ expense.paidBy.name.charAt(0) }}</IonLabel>
                                 </IonAvatar>
                                 <span>{{ expense.paidBy.name }}</span>
@@ -210,15 +210,6 @@ onMounted(async () => {
     gap: 6px;
 }
 
-.paid-avatar {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
-    background: var(--ion-color-step-150);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
 .avatar-initial {
     font-size: 10px;
